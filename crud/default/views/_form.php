@@ -29,7 +29,7 @@ use yii\bootstrap\ActiveForm;
 
 <div class="<?= \yii\helpers\Inflector::camel2id(StringHelper::basename($generator->modelClass), '-', true) ?>-form">
 
-    <?= "<?php " ?>$form = ActiveForm::begin(['layout' => '<?= $generator->formLayout ?>', 'enableClientValidation' => false]); ?>
+    <?= "<?php " ?>$form = ActiveForm::begin(['layout' => '<?= $generator->formLayout ?>', 'enableClientValidation' => false,  'options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <div class="">
         <?= "<?php " ?>echo $form->errorSummary($model); ?>

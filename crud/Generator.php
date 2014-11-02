@@ -18,6 +18,7 @@ use yii\db\ActiveQuery;
 use yii\db\ColumnSchema;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
+use yii\gii\CodeFile;
 
 /**
  * This generator generates an extended version of CRUDs.
@@ -35,6 +36,15 @@ class Generator extends \yii\gii\generators\crud\Generator
     public $formLayout = 'horizontal';
     public $requires = [];
     private $_p = [];
+    
+    /**
+     * @var string path to the trait class that will contain crud actions
+     */
+    public $traitClass;
+    /**
+     * @var bool whether to overwrite controller class, will be always created, if file does not exist
+     */
+    public $generateControllerClass = false;
 
     static public function getCoreProviders()
     {
@@ -80,7 +90,7 @@ class Generator extends \yii\gii\generators\crud\Generator
         parent::init();
     }
 
-    private function initializeProviders(){
+    private function initializeProviders() {
         // TODO: this is a hotfix for an already initialized provider queue on action re-entry
         if ($this->_p !== []) {
             return;
@@ -110,6 +120,22 @@ class Generator extends \yii\gii\generators\crud\Generator
                 'providerList' => 'Comma separated list of provider class names, make sure you are using the full namespaced path <code>app\providers\CustomProvider1,<br/>app\providers\CustomProvider2</code>.',
                 'viewPath'     => 'Output path for view files, eg. <code>@backend/views/crud</code>.',
                 'pathPrefix'   => 'Customized route/subfolder for controllers and views eg. <code>crud/</code>. <b>Note!</b> Should correspond to <code>viewPath</code>.',
+                'traitClass'   => 'This is the trait class where the CRUD functions will be coded.
+                    You should provide a fully qualified class name, e.g., <code>app\controllers\traits\PostCrud</code>.',
+                'generateControllerClass' => 'This indicates whether the generator should generate the controller class, this should usually be done only once. The trait class is always generated.',
+            ]
+        );
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return array_merge(
+            parent::attributeLabels(),
+            [
+                'generateControllerClass' => 'Generate Controller Class',
             ]
         );
     }
@@ -124,7 +150,10 @@ class Generator extends \yii\gii\generators\crud\Generator
             [
                 [['providerList'], 'filter', 'filter' => 'trim'],
                 [['actionButtonClass', 'viewPath', 'pathPrefix'], 'safe'],
-                [['viewPath'], 'required'],
+                [['viewPath','traitClass'], 'required'],
+                [['traitClass'], 'match', 'pattern' => '/(^|\\\\)[A-Z][^\\\\]+$/', 'message' => 'Trait class name must start with an uppercase letter.'],
+                [['traitClass'], 'validateNewClass'],
+                [['generateControllerClass'], 'boolean'],
             ]
         );
     }
@@ -157,9 +186,7 @@ class Generator extends \yii\gii\generators\crud\Generator
                     continue;
                     break;
             }
-
         }
-
         return $modelClass::primaryKey()[0];
     }
 
@@ -173,12 +200,25 @@ class Generator extends \yii\gii\generators\crud\Generator
      */
     public function getViewPath()
     {
-        if ($this->viewPath !== null) {
+        if ($this->viewPath !== null)
             return \Yii::getAlias($this->viewPath) . '/' . $this->getControllerID();
-        } else {
+        else
             return parent::getViewPath();
-        }
+    }
 
+    public function generate()
+    {
+        $files = parent::generate();
+        
+        //Remove the old controller if not asked and file already exists
+        $controllerClassFile = Yii::getAlias('@' . str_replace('\\', '/', ltrim($this->controllerClass, '\\')) . '.php');
+        if (!$this->generateControllerClass && is_file($controllerClassFile))
+        	$files =  array_filter($files, function($row) use ($controllerClassFile) { return $row->path != $controllerClassFile; });
+        
+        $traitFile = Yii::getAlias('@' . str_replace('\\', '/', ltrim($this->traitClass, '\\')) . '.php');
+        $files[] = new CodeFile($traitFile, $this->render('trait.php'));
+        
+        return $files;
     }
 
     /**
@@ -327,7 +367,6 @@ class Generator extends \yii\gii\generators\crud\Generator
         };
     }
 
-
     public function attributeFormat(ColumnSchema $column, $model = null)
     {
         Yii::trace("Rendering attributeFormat for '{$column->name}'", __METHOD__);
@@ -417,7 +456,6 @@ class Generator extends \yii\gii\generators\crud\Generator
     private function callProviderQueue($func, $args)
     {
         $this->initializeProviders(); // TODO: should be done on init, but providerList is empty
-        //var_dump($this->_p);exit;
         $args = func_get_args();
         unset($args[0]);
         // walk through providers

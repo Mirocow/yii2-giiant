@@ -66,16 +66,16 @@ $this->params['breadcrumbs'][] = 'View';
     <?= "<?php " ?>echo DetailView::widget([
     'model' => $model,
     'attributes' => [
-    <?php
-    foreach ($generator->getTableSchema()->columns as $column) {
-        $format = $generator->attributeFormat($column);
-        if ($format === false) {
-            continue;
-        } else {
-            echo $format . ",\n";
-        }
+<?php
+foreach ($generator->getTableSchema()->columns as $column) {
+    $format = $generator->attributeFormat($column);
+    if ($format === false) {
+        continue;
+    } else {
+        echo $format . ",\n";
     }
-    ?>
+}
+?>
     ],
     ]); ?>
 

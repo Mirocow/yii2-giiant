@@ -3,10 +3,8 @@
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 
-/**
- * @var yii\web\View $this
- * @var schmunk42\giiant\crud\Generator $generator
- */
+/* @var yii\web\View $this */
+/* @var schmunk42\giiant\crud\Generator $generator */
 
 $urlParams = $generator->generateUrlParams();
 $nameAttribute = $generator->getNameAttribute();
@@ -17,11 +15,9 @@ echo "<?php\n";
 use yii\helpers\Html;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
 
-/**
-* @var yii\web\View $this
-* @var yii\data\ActiveDataProvider $dataProvider
-* @var <?= ltrim($generator->searchModelClass, '\\') ?> $searchModel
-*/
+/* @var $this yii\web\View */
+<?= !empty($generator->searchModelClass) ? "/* @var \$searchModel " . ltrim($generator->searchModelClass, '\\') . " */\n" : '' ?>
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = '<?= Inflector::pluralize(Inflector::camel2words(StringHelper::basename($generator->modelClass))) ?>';
 $this->params['breadcrumbs'][] = $this->title;
@@ -29,10 +25,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass), '-', true) ?>-index">
 
-    <?=
-    "<?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>
-    echo $this->render('_search', ['model' =>$searchModel]);
-    ?>
+<?php if(!empty($generator->searchModelClass)): ?>
+<?= "    <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>
+echo $this->render('_search', ['model' => $searchModel]); ?>
+<?php endif; ?>
 
     <div class="clearfix">
         <p class="pull-left">
@@ -89,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($generator->indexWidgetType === 'grid'): ?>
         <?= "<?php " ?>echo GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel," : ""; ?>
         'columns' => [
         <?php
         $count = 0;
