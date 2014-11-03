@@ -226,78 +226,26 @@ class Generator extends \yii\gii\generators\model\Generator
      */
     public function generateRules($table)
     {
-        $types = [];
-        $lengths = [];
-        foreach ($table->columns as $column) {
-            if ($column->autoIncrement) {
-                continue;
-            }
-            if (!$column->allowNull && $column->defaultValue === null) {
+    	$types = [];
+    	foreach ($table->columns as $key => $column) {
+            if (!preg_match("/^yii2.*$/", $column->dbType))
+            	continue;
+           
+           	$types[str_replace('yii2','',$column->dbType)][] = $column->name; //yii2image => image, yii2file => file
+           	
+            if (!$column->allowNull && $column->defaultValue === null)
                 $types['required'][] = $column->name;
-            }
-            switch ($column->type) {
-                case Schema::TYPE_SMALLINT:
-                case Schema::TYPE_INTEGER:
-                case Schema::TYPE_BIGINT:
-                    $types['integer'][] = $column->name;
-                    break;
-                case Schema::TYPE_BOOLEAN:
-                    $types['boolean'][] = $column->name;
-                    break;
-                case Schema::TYPE_FLOAT:
-                case Schema::TYPE_DECIMAL:
-                case Schema::TYPE_MONEY:
-                    $types['number'][] = $column->name;
-                    break;
-                case Schema::TYPE_DATE:
-                case Schema::TYPE_TIME:
-                case Schema::TYPE_DATETIME:
-                case Schema::TYPE_TIMESTAMP:
-                    $types['safe'][] = $column->name;
-                    break;
-                default: // strings
-                    if ($column->dbType == "yii2image")
-                        $types['image'][] = $column->name;
-                    elseif ($column->dbType == "yii2file")
-                        $types['file'][] = $column->name;
-                    elseif ($column->size > 0)
-                        $lengths[$column->size][] = $column->name;
-                    else
-                        $types['string'][] = $column->name;
-            }
+            
+            //Remove the column from the table so it is not generated again by the parent function
+            unset($table->columns[$key]);
         }
+        
         $rules = [];
         foreach ($types as $type => $columns) {
             $rules[] = "[['" . implode("', '", $columns) . "'], '$type']";
         }
-        foreach ($lengths as $length => $columns) {
-            $rules[] = "[['" . implode("', '", $columns) . "'], 'string', 'max' => $length]";
-        }
-
-        // Unique indexes rules
-        try {
-            $db = $this->getDbConnection();
-            $uniqueIndexes = $db->getSchema()->findUniqueIndexes($table);
-            foreach ($uniqueIndexes as $uniqueColumns) {
-                // Avoid validating auto incremental columns
-                if (!$this->isColumnAutoIncremental($table, $uniqueColumns)) {
-                    $attributesCount = count($uniqueColumns);
-
-                    if ($attributesCount == 1) {
-                        $rules[] = "[['" . $uniqueColumns[0] . "'], 'unique']";
-                    } elseif ($attributesCount > 1) {
-                        $labels = array_intersect_key($this->generateLabels($table), array_flip($uniqueColumns));
-                        $lastLabel = array_pop($labels);
-                        $columnsList = implode("', '", $uniqueColumns);
-                        $rules[] = "[['" . $columnsList . "'], 'unique', 'targetAttribute' => ['" . $columnsList . "'], 'message' => 'The combination of " . implode(', ', $labels) . " and " . $lastLabel . " has already been taken.']";
-                    }
-                }
-            }
-        } catch (NotSupportedException $e) {
-            // doesn't support unique indexes information...do nothing
-        }
-
-        return $rules;
+		
+    	return array_merge(parent::generateRules($table), $rules);
     }
 
 
