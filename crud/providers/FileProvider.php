@@ -27,9 +27,23 @@ class FileProvider extends \schmunk42\giiant\base\Provider
         if (!$this->isFileType($column, $model))
             return null;
         
-        // $this->generator->requires[] = 'zhuravljov\yii2-datetime-widgets';
         return <<<EOS
-\$form->field(\$model, '{$column->name}')->fileInput()
+\$form->field(\$model, 'portrait')->widget(FileInput::classname(), [
+    'options' => ['accept' => 'image/*'],
+    'pluginOptions' => [
+        'initialPreview'=> Html::img(\$model->portrait, ['class'=>'file-preview-image', 'alt'=>\$model->name, 'title'=>\$model->name]),
+        'layoutTemplates' => [
+            'preview' => "<div class=\"file-preview {class}\">\\n"
+                . "   <div class=\"file-preview-thumbnails\"></div>\\n"
+                . "   <div class=\"clearfix\"></div>"
+                . "</div>" 
+        ],
+        'showPreview' => true,
+        'showCaption' => true,
+        'showRemove' => false,
+        'showUpload' => false
+    ]
+]);
 EOS;
     }
     

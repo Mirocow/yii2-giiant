@@ -19,6 +19,7 @@ echo "<?php\n";
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use kartik\widgets\FileInput;
 
 /**
 * @var yii\web\View $this
