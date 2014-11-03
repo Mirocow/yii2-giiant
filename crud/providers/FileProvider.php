@@ -28,12 +28,12 @@ class FileProvider extends \schmunk42\giiant\base\Provider
             return null;
         
         return <<<EOS
-\$form->field(\$model, 'portrait')->widget(FileInput::classname(), [
+\$form->field(\$model, '{$column->name}')->widget(FileInput::classname(), [
     'options' => ['accept' => 'image/*'],
     'pluginOptions' => [
-        'initialPreview'=> Html::img(\$model->portrait, ['class'=>'file-preview-image', 'alt'=>\$model->name, 'title'=>\$model->name]),
+        'initialPreview'=> (\$model->isNewRecord) ? '' : Html::img(\$model->{$column->name}, ['class'=>'file-preview-image', 'alt'=>\$model->name, 'title'=>\$model->name]),
         'layoutTemplates' => [
-            'preview' => "<div class=\"file-preview {class}\">\\n"
+            'preview' => "<div class=\"file-preview\">\\n"
                 . "   <div class=\"file-preview-thumbnails\"></div>\\n"
                 . "   <div class=\"clearfix\"></div>"
                 . "</div>" 
