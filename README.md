@@ -2,7 +2,7 @@ What is changed?
 ----------------
 - Traits for CRUD controllers action
 - RelationProvider orderBy displayed name in dropdown fields
-- Customer dbType yii2image ad yii2file for image and file automatic model generation
+- Custom dbType yii2image ad yii2file for image and file automatic model generation
 
 yii2-giiant
 ===========
