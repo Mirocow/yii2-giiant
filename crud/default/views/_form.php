@@ -36,8 +36,7 @@ use kartik\widgets\FileInput;
         <?= "<?php " ?>echo $form->errorSummary($model); ?>
         <?php echo "<?php \$this->beginBlock('main'); ?>\n"; ?>
 
-        <p>
-            <?php foreach ($safeAttributes as $attribute) {
+        <p><?php foreach ($safeAttributes as $attribute) {
                 $column   = $generator->getTableSchema()->columns[$attribute];
 
                 $prepend = $generator->prependActiveField($column, $model);
@@ -45,17 +44,15 @@ use kartik\widgets\FileInput;
                 $append = $generator->appendActiveField($column, $model);
 
                 if ($prepend) {
-                    echo "\n\t\t\t<?= " . $prepend . " ?>";
+                    echo str_replace("\n","\n\t\t\t","\n<?= " . $prepend . " ?>");
                 }
                 if ($field) {
-                    echo "\n\t\t\t<?= " . $field . " ?>";
+                    echo str_replace("\n","\n\t\t\t","\n<?= " . $field . " ?>");
                 }
                 if ($append) {
-                    echo "\n\t\t\t<?= " . $append . " ?>";
+                    echo str_replace("\n","\n\t\t\t","\n<?= " . $append . " ?>");
                 }
-            } ?>
-
-        </p>
+        } ?></p>
         <?php echo "<?php \$this->endBlock(); ?>"; ?>
 
         <?php
@@ -71,23 +68,18 @@ EOS;
         ?>
 
         <?=
-        "<?=
-    \yii\bootstrap\Tabs::widget(
-                 [
-                   'encodeLabels' => false,
-                     'items' => [ $items ]
-                 ]
-    );
-    ?>";
+        "<?= \yii\bootstrap\Tabs::widget([
+            'encodeLabels' => false,
+            'items' => [ " . str_replace("\n","\n\t\t\t",$items) . " ]
+        ]); ?>";
         ?>
 
         <hr/>
 
-        <?= "<?= " ?>Html::submitButton('<span class="glyphicon glyphicon-check"></span> '.($model->isNewRecord ? 'Create' : 'Save'), ['class' => $model->isNewRecord ?
-        'btn btn-primary' : 'btn btn-primary']) ?>
-
-        <?= "<?php " ?>ActiveForm::end(); ?>
+        <?= "<?= " ?>Html::submitButton('<span class="glyphicon glyphicon-check"></span> '.($model->isNewRecord ? 'Create' : 'Save'), ['class' => $model->isNewRecord ? 'btn btn-primary' : 'btn btn-primary']) ?>
 
     </div>
+    
+    <?= "<?php " ?>ActiveForm::end(); ?>
 
 </div>

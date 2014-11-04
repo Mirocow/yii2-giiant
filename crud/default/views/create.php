@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="clearfix"></div>
 
     <?= "<?php " ?>echo $this->render('_form', [
-    'model' => $model,
+        'model' => $model,
     ]); ?>
 
 </div>

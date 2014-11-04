@@ -24,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass), '-', true) ?>-index">
-
 <?php if(!empty($generator->searchModelClass)): ?>
 <?= "    <?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>
 echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -36,14 +35,10 @@ echo $this->render('_search', ['model' => $searchModel]); ?>
         </p>
 
         <div class="pull-right">
-
-
-            <?php
-            $items = [];
-            $model = new $generator->modelClass;
-            ?>
-            <?php foreach ($generator->getModelRelations($model) AS $relation): ?>
-                <?php
+<?php
+    $items = [];
+    $model = new $generator->modelClass;
+    foreach ($generator->getModelRelations($model) AS $relation) {
                 // relation dropdown links
                 $iconType = ($relation->multiple) ? 'arrow-right' : 'arrow-left';
                 if ($generator->isPivotRelation($relation)) {
@@ -59,12 +54,11 @@ echo $this->render('_search', ['model' => $searchModel]); ?>
                 $items[] = [
                     'label' => '<i class="glyphicon glyphicon-' . $iconType . '"> ' . $label . '</i>',
                     'url'   => [$route]
-                ]
-                ?>
-            <?php endforeach; ?>
+                ];
+    } 
+?>
 
-            <?= "<?php \n" ?>
-            echo \yii\bootstrap\ButtonDropdown::widget(
+            <?= "<?=" ?> \yii\bootstrap\ButtonDropdown::widget(
                 [
                     'id'       => 'giiant-relations',
                     'encodeLabel' => false,
@@ -74,32 +68,30 @@ echo $this->render('_search', ['model' => $searchModel]); ?>
                             'class' => 'dropdown-menu-right'
                         ],
                         'encodeLabels' => false,
-                        'items'        => <?= \yii\helpers\VarDumper::export($items) ?>
+                        'items'        => <?= str_replace("\n","\n\t\t\t\t\t\t",\yii\helpers\VarDumper::export($items)) . "\n" ?>
                     ],
                 ]
-            );
-            <?= "?>" ?>
+            ); <?= "?>\n" ?>
         </div>
     </div>
 
-    <?php if ($generator->indexWidgetType === 'grid'): ?>
-        <?= "<?php " ?>echo GridView::widget([
+<?php if ($generator->indexWidgetType === 'grid'): ?>
+    <?= "<?php " ?>echo GridView::widget([
         'dataProvider' => $dataProvider,
-        <?= !empty($generator->searchModelClass) ? "'filterModel' => \$searchModel," : ""; ?>
+<?= !empty($generator->searchModelClass) ? "\t\t'filterModel' => \$searchModel," : ""; ?>
         'columns' => [
-        <?php
-        $count = 0;
-        echo "\n"; // code-formatting
-        foreach ($generator->getTableSchema()->columns as $column) {
-            $format = trim($generator->columnFormat($column,$model));
-            if ($format == false) continue;
-            if (++$count < 8) {
-                echo "\t\t\t{$format},\n";
-            } else {
-                echo "\t\t\t/*{$format}*/\n";
-            }
+<?php
+    $count = 0;
+    foreach ($generator->getTableSchema()->columns as $column) {
+        $format = str_replace("\n","\n\t\t\t",trim($generator->columnFormat($column,$model)));
+        if ($format == false) continue;
+        if (++$count < 8) {
+            echo "\t\t\t{$format},\n";
+        } else {
+            echo "\t\t\t/*{$format}*/\n";
         }
-        ?>
+    }
+?>
             [
                 'class' => '<?= $generator->actionButtonClass ?>',
                 'urlCreator' => function($action, $model, $key, $index) {
