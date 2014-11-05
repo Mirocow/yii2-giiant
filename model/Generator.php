@@ -12,6 +12,8 @@ use yii\helpers\Inflector;
 use yii\db\Schema;
 use Yii;
 
+use pafnow\helpers\Json;
+
 /**
  * This generator will generate one or multiple ActiveRecord classes for the specified database table.
  *
@@ -220,24 +222,51 @@ class Generator extends \yii\gii\generators\model\Generator
     }
     
     /** Added by pafnow
+     * Generates the attribute labels for the specified table.
+     * @param \yii\db\TableSchema $table the table schema
+     * @return array the generated attribute labels (name => label)
+     */
+    public function generateLabels($table)
+    {
+        $table_clone = clone $table;
+        
+        foreach ($table_clone->columns as $key => $column) {
+            $column_clone = clone $column;
+            $table_clone->columns[$key] = $column_clone;
+            
+            if (!empty($column->comment))
+            	$table_clone->columns[$key]->comment = Json::getValue($column->comment, "label", false, $column->comment);
+        }
+        
+        return parent::generateLabels($table_clone);
+    }
+    
+    /** Added by pafnow
      * Generates validation rules for the specified table.
      * @param \yii\db\TableSchema $table the table schema
      * @return array the generated validation rules
      */
     public function generateRules($table)
     {
-    	$types = [];
-    	foreach ($table->columns as $key => $column) {
-            if (!preg_match("/^yii2.*$/", $column->dbType))
-            	continue;
+        $table_clone = clone $table;
+        
+        $types = [];
+        foreach ($table_clone->columns as $key => $column) {
+            $column_clone = clone $column;
+            $table_clone->columns[$key] = $column_clone;
+            
+            $type_comment = Json::getValue($column->comment, "type", false);
+            
+            if (empty($type_comment))
+                continue;
            
-           	$types[str_replace('yii2','',$column->dbType)][] = $column->name; //yii2image => image, yii2file => file
+           	$types[$type_comment][] = $column->name;
            	
             if (!$column->allowNull && $column->defaultValue === null)
                 $types['required'][] = $column->name;
             
             //Remove the column from the table so it is not generated again by the parent function
-            unset($table->columns[$key]);
+            unset($table_clone->columns[$key]);
         }
         
         $rules = [];
@@ -245,7 +274,7 @@ class Generator extends \yii\gii\generators\model\Generator
             $rules[] = "[['" . implode("', '", $columns) . "'], '$type']";
         }
 		
-    	return array_merge(parent::generateRules($table), $rules);
+    	return array_merge(parent::generateRules($table_clone), $rules);
     }
 
 
