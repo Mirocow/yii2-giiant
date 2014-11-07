@@ -221,6 +221,20 @@ class Generator extends \yii\gii\generators\model\Generator
         return $relations;
     }
     
+    protected function generateRelationName($relations, $className, $table, $key, $multiple)
+    {
+        if (!empty($key) && substr_compare($key, 'id', -2, 2, true) === 0 && strcasecmp($key, 'id')) {
+            $key = rtrim(substr($key, 0, -2), '_');
+        }
+        if ($multiple) {
+            $key = Inflector::pluralize($key);
+        }
+        $name = $rawName = Inflector::id2camel($key, '_');
+        //Pafnow deletes the running number suffix for relation with same name than field
+        
+        return $name;
+    }
+    
     /** Added by pafnow
      * Generates the attribute labels for the specified table.
      * @param \yii\db\TableSchema $table the table schema
