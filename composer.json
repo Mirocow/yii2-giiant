@@ -22,6 +22,6 @@
     "require": {
         "yiisoft/yii2-gii": "*",
         "kartik-v/yii2-widgets": "*",
-        "pafnow/yii2-helpers": "dev-master"
+        "pafnow/yii2-helpers": "*"
     }
 }
