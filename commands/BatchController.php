@@ -1,15 +1,12 @@
 <?php
 
-namespace schmunk42\giiant\commands;
+namespace pafnow\giiant\commands;
 
-use schmunk42\giiant\crud\Generator;
+use pafnow\giiant\crud\Generator;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
-/**
- * @author Tobias Munk <schmunk@usrbin.de>
- */
 class BatchController extends Controller
 {
     /**

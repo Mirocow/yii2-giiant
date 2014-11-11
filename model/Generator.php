@@ -1,11 +1,6 @@
 <?php
-/**
- * @link http://www.phundament.com
- * @copyright Copyright (c) 2014 herzog kommunikation GmbH
- * @license http://www.phundament.com/license/
- */
 
-namespace schmunk42\giiant\model;
+namespace pafnow\giiant\model;
 
 use yii\gii\CodeFile;
 use yii\helpers\Inflector;
@@ -16,9 +11,6 @@ use pafnow\helpers\Json;
 
 /**
  * This generator will generate one or multiple ActiveRecord classes for the specified database table.
- *
- * @author Tobias Munk <schmunk@usrbin.de>
- * @since 0.0.1
  */
 class Generator extends \yii\gii\generators\model\Generator
 {

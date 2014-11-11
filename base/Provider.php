@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tobias
- * Date: 19.03.14
- * Time: 01:02
- */
 
-namespace schmunk42\giiant\base;
+namespace pafnow\giiant\base;
 
 
 use yii\base\Object;
@@ -14,7 +8,7 @@ use yii\base\Object;
 class Provider extends Object
 {
     /**
-     * @var \schmunk42\giiant\crud\Generator
+     * @var \pafnow\giiant\crud\Generator
      */
     public $generator;
     public $columnNames = [''];

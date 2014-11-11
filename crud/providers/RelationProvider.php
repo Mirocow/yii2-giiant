@@ -6,11 +6,11 @@
  * Time: 10:21
  */
 
-namespace schmunk42\giiant\crud\providers;
+namespace pafnow\giiant\crud\providers;
 
 use yii\helpers\Inflector;
 
-class RelationProvider extends \schmunk42\giiant\base\Provider
+class RelationProvider extends \pafnow\giiant\base\Provider
 {
     public function activeField($column)
     {

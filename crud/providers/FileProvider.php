@@ -1,8 +1,8 @@
 <?php
 
-namespace schmunk42\giiant\crud\providers;
+namespace pafnow\giiant\crud\providers;
 
-class FileProvider extends \schmunk42\giiant\base\Provider
+class FileProvider extends \pafnow\giiant\base\Provider
 {
     private function isFileType($attribute, $model)
     {

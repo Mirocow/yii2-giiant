@@ -1,18 +1,13 @@
 <?php
-/**
- * @link      http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license   http://www.yiiframework.com/license/
- */
 
-namespace schmunk42\giiant\crud;
+namespace pafnow\giiant\crud;
 
-use schmunk42\giiant\crud\providers\CallbackProvider;
-use schmunk42\giiant\crud\providers\DateTimeProvider;
-use schmunk42\giiant\crud\providers\EditorProvider;
-use schmunk42\giiant\crud\providers\RangeProvider;
-use schmunk42\giiant\crud\providers\RelationProvider;
-use schmunk42\giiant\crud\providers\SelectProvider;
+use pafnow\giiant\crud\providers\CallbackProvider;
+use pafnow\giiant\crud\providers\DateTimeProvider;
+use pafnow\giiant\crud\providers\EditorProvider;
+use pafnow\giiant\crud\providers\RangeProvider;
+use pafnow\giiant\crud\providers\RelationProvider;
+use pafnow\giiant\crud\providers\SelectProvider;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ColumnSchema;
@@ -22,8 +17,6 @@ use yii\gii\CodeFile;
 
 /**
  * This generator generates an extended version of CRUDs.
- * @author Tobais Munk <schmunk@usrbin.de>
- * @since 1.0
  */
 class Generator extends \yii\gii\generators\crud\Generator
 {

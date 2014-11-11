@@ -1,13 +1,6 @@
 <?php
-/**
- * @link http://www.diemeisterei.de/
- * @copyright Copyright (c) 2014 diemeisterei GmbH, Stuttgart
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
-namespace schmunk42\giiant;
+namespace pafnow\giiant;
 
 use yii\base\Application;
 use yii\base\BootstrapInterface;
@@ -15,8 +8,7 @@ use yii\base\BootstrapInterface;
 
 /**
  * Class Bootstrap
- * @package schmunk42\giiant
- * @author Tobias Munk <tobias@diemeisterei.de>
+ * @package pafnow\giiant
  */
 class Bootstrap implements BootstrapInterface
 {
