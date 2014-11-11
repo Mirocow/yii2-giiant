@@ -61,8 +61,8 @@ EOS;
         else
             return <<<EOS
 [
-    'format'=>'image',
-    'attribute'=>'$column->name',
+    'format' => ['image', 'options' => ['class' => 'img-responsive']],
+    'attribute' => '$column->name'
 ]
 EOS;
     }
